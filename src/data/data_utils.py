@@ -20,12 +20,12 @@ def load_and_filter_data(filepath : str, start_year : int = 2000, end_year : int
     df = pd.read_csv(filepath)
 
     df = df[df['MONAT'] != 'Summe']
-    df = df[df['AUSPRAEGUNG'] == 'insgesamt']
 
     df['datetime'] = pd.to_datetime(df['MONAT'], format='%Y%m')
     df = df[(df['datetime'].dt.year >= start_year) & (df['datetime'].dt.year <= end_year)]
     pd.to_datetime(df['datetime'])
     df.set_index('datetime', inplace=True)
+
     return df
 
 def visualise_data(df: pd.DataFrame, title: str = 'Total amount of traffic accidents over time') -> List[str]:
@@ -45,7 +45,8 @@ def visualise_data(df: pd.DataFrame, title: str = 'Total amount of traffic accid
 
     for category in categories:
         df_category = df[df['MONATSZAHL'] == category]
-        
+        df = df[df['AUSPRAEGUNG'] == 'insgesamt']
+
         # Splitting the data
         train = df_category[:'2020']
         test = df_category['2021':]
@@ -70,8 +71,10 @@ def create_features(df: pd.DataFrame) -> pd.DataFrame:
     """
     Create time series features based on timeseries index and the 'MONATSZAHL' column.
     """
-    df['month'] = df.index.month
-    df['year'] = df.index.year
-    df['MONATSZAHL_ENC'], _ = pd.factorize(df['MONATSZAHL'])
+    df = df[['MONATSZAHL', 'AUSPRAEGUNG', 'WERT']].copy()
+    df['MONAT'] = df.index.month
+    df['JAHR'] = df.index.year
+    df['MONATSZAHL'], _ = pd.factorize(df['MONATSZAHL'])
+    df['AUSPRAEGUNG'], _ = pd.factorize(df['AUSPRAEGUNG'])
 
     return df

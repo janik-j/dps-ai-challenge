@@ -10,11 +10,10 @@ def main():
     csv_filepath = os.path.join('data', 'monthly_traffic_accidents.csv')
     # Process and save data
     df = load_and_filter_data(csv_filepath, 2000, 2024)
-    # print(df.head())
-    print(visualise_data(df))
+    visualise_data(df)
     df = create_features(df)
+    print(df.columns)
     print(df.head())
-
 
 if __name__ == '__main__':
     main()
