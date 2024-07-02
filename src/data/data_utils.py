@@ -49,7 +49,7 @@ def create_features(df: pd.DataFrame) -> pd.DataFrame:
 
     return df
 
-def visualise_data(train: pd.DataFrame, 
+def visualize_data(train: pd.DataFrame, 
                    test: pd.DataFrame, 
                    title: str = 'Total amount of traffic accidents over time',
                    category: str = 'Alkoholunfälle',
@@ -87,18 +87,18 @@ def visualise_data(train: pd.DataFrame,
 
     plt.figure(figsize=(15, 5))
     split_date = pd.Timestamp('2021-01-01')
-    plt.axvline(x=split_date, color='black', linestyle='--', label='Train/Test Split')
     plt.title(f'{title} - {category}')
-    plt.legend()
+    plt.axvline(x=split_date, color='black', linestyle='--', label='Train/Test Split')
+
     if 'prediction' in test.columns:
-        plt.plot(train.index, train['value'], '-', label='Train Set', color='blue')
-        plt.plot(test.index, test['value'], '-', label='Test Set', color='blue')
+        plt.plot(test.index, test['value'], '-', label='Test Set', color='darkblue')
         plt.plot(test.index, test['prediction'], '-', label='Test Prediction', color='orange')
         file_path = os.path.join("media", f'{category}_{start_date_str}_{end_date_str}_prediction.png')
     else:
         plt.plot(train.index, train['value'], '-', label='Train Set', color='blue')
-        plt.plot(test.index, test['value'], '-', label='Test Set', color='red')
+        plt.plot(test.index, test['value'], '-', label='Test Set', color='darkblue')
         file_path = os.path.join("media", f'{category}_{start_date_str}_{end_date_str}.png')
+    plt.legend()
     plt.savefig(file_path)
     plt.close()
     created_files.append(file_path)

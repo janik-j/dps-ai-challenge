@@ -2,7 +2,7 @@ import argparse
 import os
 import numpy as np
 from sklearn.metrics import mean_squared_error
-from data.data_utils import load_and_filter_data, visualise_data, create_features
+from data.data_utils import load_and_filter_data, visualize_data, create_features
 from model.XGBRegressor import train_model
 
 def main(category, scope, predict):
@@ -21,13 +21,13 @@ def main(category, scope, predict):
     X_test = test[FEATURES]
     y_test = test[TARGET]
 
-    visualise_data(train, test, title=f'Traffic accidents over time for category {category}', category=category)
+    visualize_data(train, test, title=f'Traffic accidents over time for category {category}', category=category)
 
     if predict == 'Yes':
         model = train_model(X_train, y_train)
         test['prediction'] = model.predict(X_test)
 
-        visualise_data(train, test, title=f'Raw data and predictions for category {category}', category=category, start_date='2021-01-01', end_date='2023-01-01')
+        visualize_data(train, test, title=f'Raw data and predictions for category {category}', category=category, start_date='2021-01-01', end_date='2023-01-01')
 
         score = np.sqrt(mean_squared_error(y_test, test['prediction']))
         print(f'RMSE Score on Test set for category {category}: {score:0.2f}')
