@@ -5,8 +5,7 @@ This repository contains my solution for the Digital Product School AI Engineeri
 The analysis uses the ["Monatszahlen Verkehrsunfälle"](https://opendata.muenchen.de/dataset/monatszahlen-verkehrsunfaelle/resource/40094bd6-f82d-4979-949b-26c8dc00b9a7) dataset from the München Open Data Portal. It contains monthly traffic accident statistics for various categories.
 
 ## Project Structure
-- `api/`: Flask API to deploy the model
-- `checkpoints/`: XGBoost model weights
+- `api/`: Flask API to deploy the model, also contains subfolder `checkpoints\` with model weights
 - `data/`: Contains the raw and processed datasets
 - `media/`: Plot visualisations of the data
 - `src/`: Source code for data processing, analysis and model training

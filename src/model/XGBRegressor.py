@@ -12,11 +12,7 @@ def train_model(X_train, y_train):
             eval_set=[(X_train, y_train)],
             verbose=100)
     
-    checkpoint_dir = 'checkpoints'
-    os.makedirs(checkpoint_dir, exist_ok=True)
-    
-    # Save the model
-    model_path = os.path.join(checkpoint_dir, 'xgb_model.joblib')
+    model_path = os.path.join('api', 'checkpoints', 'xgb_model.joblib')
     joblib.dump(reg, model_path)
 
     return reg
