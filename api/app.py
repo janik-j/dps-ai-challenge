@@ -6,7 +6,7 @@ import os
 app = Flask(__name__)
 
 # Load the model
-model_path = os.path.join(os.path.dirname(__file__), '..', 'checkpoints', 'xgp_model.joblib')
+model_path = os.path.join(os.path.abspath(os.getcwd()), 'checkpoints', 'xgb_model.joblib')
 model = joblib.load(model_path)
 
 @app.route('/predict', methods=['POST'])
