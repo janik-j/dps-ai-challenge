@@ -20,6 +20,7 @@ def load_and_filter_data(filepath : str, start_year : int = 2000, end_year : int
     df = pd.read_csv(filepath)
 
     df = df[df['MONAT'] != 'Summe']
+    df = df[df['AUSPRAEGUNG'] == 'insgesamt']
 
     df['datetime'] = pd.to_datetime(df['MONAT'], format='%Y%m')
     df = df[(df['datetime'].dt.year >= start_year) & (df['datetime'].dt.year <= end_year)]
@@ -28,7 +29,32 @@ def load_and_filter_data(filepath : str, start_year : int = 2000, end_year : int
 
     return df
 
-def visualise_data(df: pd.DataFrame, title: str = 'Total amount of traffic accidents over time') -> List[str]:
+def create_features(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Create time series features based on timeseries index and the 'MONATSZAHL' column.
+    """
+    df = df[['MONATSZAHL', 'AUSPRAEGUNG', 'WERT']].copy()
+    df['MONAT'] = df.index.month
+    df['JAHR'] = df.index.year
+
+    category_mapping = {'Alkoholunfälle': 0, 'Fluchtunfälle': 1, 'Verkehrsunfälle': 2}
+    df['MONATSZAHL'] = df['MONATSZAHL'].map(category_mapping)    
+
+    df['AUSPRAEGUNG'], _ = pd.factorize(df['AUSPRAEGUNG'])
+
+    df.rename(columns={
+        'MONATSZAHL': 'category',
+        'AUSPRAEGUNG': 'type',
+        'WERT': 'value',
+        'MONAT': 'month',
+        'JAHR': 'year',
+    }, inplace=True)
+
+    return df
+
+def visualise_data(train: pd.DataFrame, 
+                   test : pd.DataFrame, 
+                   title: str = 'Total amount of traffic accidents over time'):
     """
     Visualise the data by plotting the total amount of traffic accidents over time.
 
@@ -39,50 +65,31 @@ def visualise_data(df: pd.DataFrame, title: str = 'Total amount of traffic accid
     Returns: A list of file paths to the saved plots.
     """
 
-    categories = ['Alkoholunfälle', 'Fluchtunfälle', 'Verkehrsunfälle']
-
+    category_mapping = {0 : 'Alkoholunfälle', 1 : 'Fluchtunfälle', 2: 'Verkehrsunfälle'}
+    categories = train['category'].unique()
     created_files = []  
 
     for category in categories:
-        df_category = df[df['MONATSZAHL'] == category]
-        df = df[df['AUSPRAEGUNG'] == 'insgesamt']
+        train_category = train[train['category'] == category]
+        test_category = test[test['category'] == category]
 
-        # Splitting the data
-        train = df_category[:'2020']
-        test = df_category['2021':]
-        
         plt.figure(figsize=(15, 5))
-        plt.plot(train.index, train['WERT'], '.', label='Train Set', color='blue')
-        plt.plot(test.index, test['WERT'], '.', label='Test Set', color='red')
-        if not train.empty and not test.empty:
-            split_date = pd.Timestamp('2021-01-01')
-            plt.axvline(x=split_date, color='black', linestyle='--', label='Train/Test Split')
-        plt.title(f'{title} - {category}')
+        split_date = pd.Timestamp('2021-01-01')
+        plt.axvline(x=split_date, color='black', linestyle='--', label='Train/Test Split')
+        plt.title(f'{title} - {category_mapping[category]}')
         plt.legend()
-        
-        file_path = os.path.join("media", f'{category}.png')
+        if 'prediction' in test_category.columns:
+            plt.plot(train_category.index, train_category['value'], '.', label='Train Set', color='blue')
+            plt.plot(test_category.index, test_category['value'], '.', label='Test Set', color='blue')
+            plt.plot(test_category.index, test_category['prediction'], '.', label='Test Prediction', color='orange')
+            file_path = os.path.join("media", f'{category_mapping[category]}_prediction.png')
+        else:
+            plt.plot(train_category.index, train_category['value'], '.', label='Train Set', color='blue')
+            plt.plot(test_category.index, test_category['value'], '.', label='Test Set', color='red')
+            file_path = os.path.join("media", f'{category_mapping[category]}.png')
         plt.savefig(file_path)
         plt.close()
         created_files.append(file_path)  
     
     return created_files
 
-def create_features(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Create time series features based on timeseries index and the 'MONATSZAHL' column.
-    """
-    df = df[['MONATSZAHL', 'AUSPRAEGUNG', 'WERT']].copy()
-    df['MONAT'] = df.index.month
-    df['JAHR'] = df.index.year
-    df['MONATSZAHL'], _ = pd.factorize(df['MONATSZAHL'])
-    df['AUSPRAEGUNG'], _ = pd.factorize(df['AUSPRAEGUNG'])
-
-    df.rename(columns={
-        'MONATSZAHL': 'Category',
-        'AUSPRAEGUNG': 'Type',
-        'WERT': 'Value',
-        'MONAT': 'Month',
-        'JAHR': 'Year',
-    }, inplace=True)
-
-    return df
