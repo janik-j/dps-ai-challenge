@@ -53,16 +53,18 @@ def visualize_data(train: pd.DataFrame,
                    test: pd.DataFrame, 
                    title: str = 'Total amount of traffic accidents over time',
                    category: str = 'Alkoholunfälle',
+                   scope: str = 'insgesamt',
                    start_date: str = "2000-01-01",
                    end_date: str = "2024-01-01"):
     """
-    Visualise the data by plotting the total amount of traffic accidents over time for a specific time range.
+    Visualize the data by plotting the total amount of traffic accidents over time for a specific time range.
 
     Parameters:
     train (pd.DataFrame): The training data subset.
     test (pd.DataFrame): The testing data subset.
     title (str): The title of the plot.
     category (str): The category to filter the data on. Either 'Alkoholunfälle', 'Fluchtunfälle' or 'Verkehrsunfälle'.
+    scope (str): The type of the data to filter on. Either 'insgesamt', 'Verletzte und Getötete' or 'mit Personenschäden'.
     start_date (str): The start date for the data to be visualized (inclusive).
     end_date (str): The end date for the data to be visualized (inclusive).
 
@@ -86,18 +88,20 @@ def visualize_data(train: pd.DataFrame,
     end_date_str = end_date.strftime('%Y-%m')
 
     plt.figure(figsize=(15, 5))
+    plt.title(f'{title}')
     split_date = pd.Timestamp('2021-01-01')
-    plt.title(f'{title} - {category}')
-    plt.axvline(x=split_date, color='black', linestyle='--', label='Train/Test Split')
+    if start_date <= split_date <= end_date:
+        plt.axvline(x=split_date, color='black', linestyle='--', label='Train/Test Split')
 
     if 'prediction' in test.columns:
+        plt.plot(train.index, train['value'], '-', label='Train Set', color='blue')
         plt.plot(test.index, test['value'], '-', label='Test Set', color='darkblue')
         plt.plot(test.index, test['prediction'], '-', label='Test Prediction', color='orange')
-        file_path = os.path.join("media", f'{category}_{start_date_str}_{end_date_str}_prediction.png')
+        file_path = os.path.join("media", f'{category}_{start_date_str}_{end_date_str}_{scope}_prediction.png')
     else:
         plt.plot(train.index, train['value'], '-', label='Train Set', color='blue')
         plt.plot(test.index, test['value'], '-', label='Test Set', color='darkblue')
-        file_path = os.path.join("media", f'{category}_{start_date_str}_{end_date_str}.png')
+        file_path = os.path.join("media", f'{category}_{start_date_str}_{end_date_str}_{scope}.png')
     plt.legend()
     plt.savefig(file_path)
     plt.close()

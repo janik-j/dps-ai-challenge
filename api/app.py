@@ -9,6 +9,10 @@ app = Flask(__name__)
 model_path = os.path.join(os.getcwd(), 'checkpoints', 'xgb_model.joblib')
 model = joblib.load(model_path)
 
+@app.route("/")
+def index():
+	return "Hello World!"
+
 @app.route('/predict', methods=['POST'])
 def predict():
     data = request.json
