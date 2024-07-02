@@ -6,4 +6,4 @@ The analysis uses the ["Monatszahlen Verkehrsunfälle"](https://opendata.muenche
 
 ## Project Structure
 - `data/`: Contains the raw and processed datasets
-- `src/`: Source code for data processing, analysis and model training
+- `src/`: Source code for data loading, data processing, analysis and model training
