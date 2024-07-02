@@ -17,12 +17,16 @@ def load_and_filter_data(filepath : str, start_year : int = 2000, end_year : int
     """
 
     # Load the data
-    data = pd.read_csv(filepath)
-    data = data[data['MONAT'] != 'Summe']
-    data['datetime'] = pd.to_datetime(data['MONAT'], format='%Y%m')
-    data = data[(data['datetime'].dt.year >= start_year) & (data['datetime'].dt.year <= end_year)]
-    
-    return data
+    df = pd.read_csv(filepath)
+
+    df = df[df['MONAT'] != 'Summe']
+    df = df[df['AUSPRAEGUNG'] == 'insgesamt']
+
+    df['datetime'] = pd.to_datetime(df['MONAT'], format='%Y%m')
+    df = df[(df['datetime'].dt.year >= start_year) & (df['datetime'].dt.year <= end_year)]
+    pd.to_datetime(df['datetime'])
+    df.set_index('datetime', inplace=True)
+    return df
 
 def visualise_data(df: pd.DataFrame, title: str = 'Total amount of traffic accidents over time') -> List[str]:
     """
@@ -36,9 +40,6 @@ def visualise_data(df: pd.DataFrame, title: str = 'Total amount of traffic accid
     """
 
     categories = ['Alkoholunfälle', 'Fluchtunfälle', 'Verkehrsunfälle']
-    df = df[df['AUSPRAEGUNG'] == 'insgesamt']
-    pd.to_datetime(df['datetime'])
-    df.set_index('datetime', inplace=True)
 
     created_files = []  
 
@@ -64,3 +65,13 @@ def visualise_data(df: pd.DataFrame, title: str = 'Total amount of traffic accid
         created_files.append(file_path)  
     
     return created_files
+
+def create_features(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Create time series features based on timeseries index and the 'MONATSZAHL' column.
+    """
+    df['month'] = df.index.month
+    df['year'] = df.index.year
+    df['MONATSZAHL_ENC'], _ = pd.factorize(df['MONATSZAHL'])
+
+    return df
