@@ -13,7 +13,6 @@ def main():
     train = create_features(load_and_filter_data(csv_filepath, 2000, 2020))
     test = create_features(load_and_filter_data(csv_filepath, 2021, 2022))
     visualise_data(train, test, title='Total amount of traffic accidents over time')
-
     FEATURES = ['category', 'type', 'year', 'month']
     TARGET = 'value'
 
@@ -25,7 +24,8 @@ def main():
 
     model = train_model(X_train, y_train)
     test['prediction'] = model.predict(X_test)
-    visualise_data(train, test, title='Raw data and predictions')
+    print(test.head(40))
+    visualise_data(train, test, title='Raw data and predictions', start_date='2021-01-01', end_date='2022-01-01')
 
 
 if __name__ == '__main__':
