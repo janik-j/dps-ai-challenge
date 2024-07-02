@@ -77,4 +77,12 @@ def create_features(df: pd.DataFrame) -> pd.DataFrame:
     df['MONATSZAHL'], _ = pd.factorize(df['MONATSZAHL'])
     df['AUSPRAEGUNG'], _ = pd.factorize(df['AUSPRAEGUNG'])
 
+    df.rename(columns={
+        'MONATSZAHL': 'Category',
+        'AUSPRAEGUNG': 'Type',
+        'WERT': 'Value',
+        'MONAT': 'Month',
+        'JAHR': 'Year',
+    }, inplace=True)
+
     return df
