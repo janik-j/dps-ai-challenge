@@ -12,7 +12,7 @@ def train_model(X_train, y_train):
             eval_set=[(X_train, y_train)],
             verbose=100)
     
-    checkpoint_dir = 'checkpoint'
+    checkpoint_dir = 'checkpoints'
     os.makedirs(checkpoint_dir, exist_ok=True)
     
     # Save the model
