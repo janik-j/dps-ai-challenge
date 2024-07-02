@@ -10,6 +10,15 @@ The analysis uses the ["Monatszahlen Verkehrsunfälle"](https://opendata.muenche
 - `media/`: Plot visualisations of the data
 - `src/`: Source code for data processing, analysis and model training
 
+## Model
+This project uses an XGBoost regressor for predicting traffic accident data. The model is implemented using the XGBoost library and is configured with specific hyperparameters to optimize performance. Key features include:
+
+Booster type: Gradient Boosted Trees (gbtree)
+Number of estimators: 5000
+Maximum tree depth: 5
+Learning rate: 0.001
+
+The trained model is saved using joblib for easy loading and deployment. The model's checkpoint is stored in the api/checkpoints/ directory.
 
 ## Getting Started
 To get started with the dps-ai-challenge, follow these steps:
@@ -56,10 +65,11 @@ To make predictions for specific categories and scopes on the test set, use the 
 `python src/main.py --category "Verkehrsunfälle" --scope "insgesamt" --predict "Yes" "2000-01-01" --end_date "2023-01-01"`<br>
 ![Verkehrsunfälle Prediction Graph](media/Verkehrsunfälle_2000-01_2023-01_insgesamt_prediction.png)
 
-- Or predict not for the whole scope but just "Verletzte und Geötete"
+- Or predict not for the whole scope but just "Verletzte und Geötete" <br>
 `python src/main.py --category "Verkehrsunfälle" --scope "Verletzte und Geötete" --predict "Yes"`<br>
 ![Verkehrsunfälle Prediction Graph](media/Alkoholunfälle_2021-01_2023-01_Verletzte_und_Getötete_prediction.png)
 
+### 
 ### RMSE
 - RMSE Score on the test set for category Alkoholunfälle is 10.19. <br>
 - RMSE will be always printed after running the script.
